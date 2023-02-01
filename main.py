@@ -48,18 +48,39 @@ search_params = {
 }
 response = requests.get(search_api_server, params=search_params)
 json_response = response.json()
-organization = json_response["features"][0]
-org_name = organization["properties"]["CompanyMetaData"]["name"]
-org_address = organization["properties"]["CompanyMetaData"]["address"]
-point = organization["geometry"]["coordinates"]
-time = organization["properties"]["CompanyMetaData"]['Hours']['text']
-org_point = "{0},{1}".format(point[0], point[1])
+o = [','.join(toponym_coodrinates.split())]
+if len(json_response["features"]) > 10:
+    n = 10
+else:
+    n = len(json_response["features"])
+for i in range(n):
+    organization = json_response["features"][i]
+    org_name = organization["properties"]["CompanyMetaData"]["name"]
+    org_address = organization["properties"]["CompanyMetaData"]["address"]
+    point = organization["geometry"]["coordinates"]
+    try:
+        if organization["properties"]["CompanyMetaData"]['Hours']['Availabilities'][0]['TwentyFourHours']:
+            time = 2
+    except:
+        time = 3
+    if time == 3:
+        try:
+            a = organization["properties"]["CompanyMetaData"]['Hours']
+            time = 1
+        except:
+            time = 3
+    if time == 3:
+        r = 'pmgrs'
+    elif time == 2:
+        r = 'pmgns'
+    else:
+        r = 'pmbls'
+    org_point = "{0},{1}".format(point[0], point[1]) + f',{r}'
+    o.append(org_point)
 map_params = {
     "l": "map",
-    'pt': '~'.join([','.join(toponym_coodrinates.split()), org_point])
+    'pt': '~'.join(o)
 }
 map_api_server = "http://static-maps.yandex.ru/1.x/"
 response = requests.get(map_api_server, params=map_params)
-metrs = lonlat_distance(point, list(map(float, toponym_coodrinates.split())))
-print([org_name, org_address, time, metrs])
 start(response)
