@@ -1,106 +1,137 @@
-import os
-import sys
-from random import choice, randrange
-import pygame
-import requests
+from flask import Flask, url_for, request
+
+app = Flask(__name__)
 
 
-a = ['Азнакаево', 'Альметьевск', 'Арск', 'Бавлы', '	Болгар', 'Бугульма', 'Буинск',
-     'Елабуга', 'Заинск', '	Зеленодольск', 'Иннополис', 'Казань',
-     'Кукмор', 'Лаишево', 'Нижнекамск', 'Набережные Челны', 'Нурлат', 'Чистополь']
-API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
+@app.route('/')
+def index():
+    return "Миссия Колонизация Марса"
 
 
-def geocode(address):
-    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}" \
-                       f"&geocode={address}&format=json"
-    response = requests.get(geocoder_request)
-    if response:
-        json_response = response.json()
-    else:
-        raise RuntimeError(
-            """Ошибка выполнения запроса:
-                       {request}
-                Http статус: {status} ({reason})""".format(
-                request=geocoder_request, status=response.status_code, reason=response.reason))
-    features = json_response["response"]["GeoObjectCollection"]["featureMember"]
-    return features[0]["GeoObject"] if features else None
+@app.route('/index')
+def index1():
+    return "И на Марсе будут яблони цвести!"
 
 
-def get_ll_span(address):
-    toponym = geocode(address)
-    if not toponym:
-        return (None, None)
-    toponym_coodrinates = toponym["Point"]["pos"]
-    toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
-    ll = ",".join([toponym_longitude, toponym_lattitude])
-    envelope = toponym["boundedBy"]["Envelope"]
-    l, b = envelope["lowerCorner"].split(" ")
-    r, t = envelope["upperCorner"].split(" ")
-    dx = abs(float(l) - float(r)) / 2.0
-    dy = abs(float(t) - float(b)) / 2.0
-    span = f"{dx},{dy}"
-    return ll, span
+@app.route('/promotion')
+def countdown():
+    countdown_list = ['Человечество вырастает из детства.', 'Человечеству мала одна планета.',
+                      'Мы сделаем обитаемыми безжизненные пока планеты.', 'И начнем с Марса!',
+                      'Присоединяйся!']
+    return '</br>'.join(countdown_list)
 
 
-def start(response, toponym_to_find):
-    if not response:
-        print("Ошибка выполнения запроса:")
-        print("Http статус:", response.status_code, "(", response.reason, ")")
-        sys.exit(1)
-    map_file = "map.png"
-    with open(map_file, "wb") as file:
-        file.write(response.content)
-    pygame.init()
-    screen = pygame.display.set_mode((600, 450))
-    screen.blit(pygame.image.load(map_file), (0, 0))
-    pygame.display.flip()
-    running = True
-    n = 0
-    pygame.mixer.music.load("233843.mp3")
-    pygame.mixer.music.play(-1)
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                n = 1
-                font = pygame.font.Font(None, 20)
-                text = font.render(toponym_to_find, True, (randrange(255), randrange(255), randrange(255)))
-        if n == 100:
-            os.remove(map_file)
-            toponym_to_find = choice(a)
-            response = mama(toponym_to_find)
-            if not response:
-                print("Ошибка выполнения запроса:")
-                print("Http статус:", response.status_code, "(", response.reason, ")")
-                sys.exit(1)
-            map_file = "map.png"
-            with open(map_file, "wb") as file:
-                file.write(response.content)
-            n = 0
-        screen.blit(pygame.image.load(map_file), (0, 0))
-        if n > 0:
-            font = pygame.font.Font(None, 80)
-            text = font.render(toponym_to_find, True, (randrange(255), randrange(255), randrange(255)))
-            screen.blit(text, (0, 300))
-            n += 1
-        pygame.display.flip()
-    pygame.quit()
-    os.remove(map_file)
+@app.route('/image_mars')
+def ro():
+    return f'''<!doctype html>
+                <html lang="en">
+                  <body>
+                  <figure>
+                      <h1>Привет, Марс!</h1>
+                      <img src="{url_for('static', filename='img/MARS.jpg')}">
+                      <figcaption>Жди нас, Марс!</figcaption>
+                  </figure>
+                  </body>
+                </html>'''
 
 
-def mama(toponym_to_find):
-    map_params = {
-        "ll": get_ll_span(toponym_to_find)[0],
-        "spn": get_ll_span(toponym_to_find)[1],
-        "l": "sat"
-    }
-    map_api_server = "http://static-maps.yandex.ru/1.x/"
-    response = requests.get(map_api_server, params=map_params)
-    return response
+@app.route('/form_sample', methods=['POST', 'GET'])
+def form_sample():
+    if request.method == 'GET':
+        return f'''<!doctype html>
+                        <html lang="en">
+                          <head>
+                            <meta charset="utf-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                            <link rel="stylesheet"
+                            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+                            integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+                            crossorigin="anonymous">
+                            <link rel="stylesheet" type="text/css" href="{url_for('static', filename='css/style.css')}" />
+                            <title>Отбор астронавтов</title>
+                            <h1>Анкета претендента</h1>
+                            <h5>на участии в миссии</h5>
+                          </head>
+                          <body>
+                            <div>
+                                <form class="login_form" method="post">
+                                    <input type"" class="form-control" id="name" placeholder="Введите фамилию" name="email">
+                                    <input type="password" class="form-control" id="password" placeholder="Введите имя" name="password">
+                                    <div class="form-group">
+                                      <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Введите адрес почты" name="email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="classSelect">Какое у вас образование?</label>
+                                        <select class="form-control" id="classSelect" name="class">
+                                          <option>Начальное</option>
+                                          <option>Среднее</option>
+                                          <option>Высшее</option>
+                                        </select>
+                                    </div>
+                                    <label for="about">Какие у вас есть профессии?</label>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">инженер-исследователь</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">пилот</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">строитель</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">экзобиолог</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">врач</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">инженер по терраформированию</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group form-check">
+                                      <label class="form-check-label" for="acceptRules">климатолог</label>
+                                      <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="about">Почему Вы хотите принять участие в миссии?</label>
+                                        <textarea class="form-control" id="about" rows="3" name="about"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="photo">Приложите фотографию</label>
+                                        <input type="file" class="form-control-file" id="photo" name="file">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="form-check">Укажите пол</label>
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="radio" name="sex" id="male" value="male" checked>
+                                          <label class="form-check-label" for="male">
+                                            Мужской
+                                          </label>
+                                        </div>
+                                        <div class="form-check">
+                                          <input class="form-check-input" type="radio" name="sex" id="female" value="female">
+                                          <label class="form-check-label" for="female">
+                                            Женский
+                                          </label>
+                                        </div>
+                                        <div class="form-group form-check">
+                                        <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                                        <label class="form-check-label" for="acceptRules">Готовы остаться на Марсе?</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Записаться</button>
+                                </form>
+                            </div>
+                          </body>
+                        </html>'''
+    elif request.method == 'POST':
+        return "Форма отправлена"
 
 
 if __name__ == '__main__':
-    toponym_to_find = choice(a)
-    start(mama(toponym_to_find), toponym_to_find)
+    app.run(port=8080, host='127.0.0.1')
