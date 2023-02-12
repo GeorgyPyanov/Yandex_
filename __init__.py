@@ -35,10 +35,9 @@ def ro():
                 </html>'''
 
 
-@app.route('/sample_file_upload')
+@app.route('/sample_file_upload', methods=['POST', 'GET'])
 def sample_file_upload():
-    a = True
-    if a:
+    if request.method == 'GET':
         return f'''<!doctype html>
                         <html lang="en">
                           <head>
@@ -49,36 +48,25 @@ def sample_file_upload():
                              integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
                              crossorigin="anonymous">
                             <link rel="stylesheet" type="text/css" href="{url_for('static', filename='css/style.css')}" />
+                            <title>Пример загрузки файла</title>
                           </head>
                           <body>
-                            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                              <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                  <img src="{url_for('static', filename='img/img.png')}" class="d-block w-100">
+                            <h1>Загрузим файл</h1>
+                            <div>
+                              <form class="login_form" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                  <label for="photo">Приложите фотографию</label>
+                                  <input type="file" class="form-control-file" id="photo" name="file">
                                 </div>
-                                <div class="carousel-item">
-                                  <img src="{url_for('static', filename='img/img_1.png')}" class="d-block w-100">
-                                </div>
-                                <div class="carousel-item">
-                                <img src="{url_for('static', filename='img/img_2.png')}" class="d-block w-100">
-                                </div>
-                                <div class="carousel-item">
-                                <img src="{url_for('static', filename='img/img_3.png')}" class="d-block w-100">
-                                </div>
-                              </div>
-                              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Предыдущий</span>
-                              </button>
-                              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Следующий</span>
-                              </button>
-                              <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
-                              <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+                                <button type="submit" class="btn btn-primary">Записаться</button>
+                              </form>
                             </div>
                           </body>
                         </html>'''
+    elif request.method == 'POST':
+        f = request.files['file']
+        f.save('static/img/1' + f.filename[-4:])
+        return f'''<img src="static/img/1{f.filename[-4:]}" alt="здесь должна была быть картинка, но не нашлась">'''
 
 
 if __name__ == '__main__':
