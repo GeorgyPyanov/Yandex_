@@ -1,24 +1,15 @@
- <!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-    <title>{{title}}</title>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
 </head>
 <body>
-<header>
-    <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="22">Миссия Колонизация Марса</a>
-    </nav>
-</header>
-<!-- Begin page content -->
-<main role="main" class="container">
-    {% block content %}{% endblock %}
-</main>
+<h1>Размещение по каютам</h1>
+{% set a = 'Каюта № ' %}
+{% for user in user_list %}
+<div>{{ user }} - {{ a }}{{ loop.index }} - {% if loop.first %} капитан корабля {% endif %}
+</div>
+{% endfor %}
 </body>
 </html>

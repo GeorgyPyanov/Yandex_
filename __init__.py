@@ -47,13 +47,10 @@ def ro():
                 </html>'''
 
 
-@app.route('/auto_answer', methods=['GET', 'POST'])
-@app.route('/answer', methods=['GET', 'POST'])
+@app.route('/distribution')
 def sample_file_upload():
-    form = LoginForm()
-    if form.validate_on_submit():
-        return redirect('/success')
-    return render_template('auto_answer.html', title='Авторизация', form=form)
+    user_list = ['Юлия Викторовна', 'Наташа', 'Полина', 'Чулпан', 'Гоша']
+    return render_template('base.html', user_list=user_list)
 
 
 if __name__ == '__main__':
