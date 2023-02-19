@@ -1,14 +1,14 @@
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-
-@app.route('/<username>')
-@app.route('/index/<username>')
-def greeting(username):
-    return render_template('base.html',
-                           username=username)
-
-
-if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1')
+right = int(input()) + 1
+left = 0
+la = (left + right) // 2
+print(la)
+while True:
+    k = int(input())
+    if k == 0:
+        break
+    if k == 1:
+        left = la
+    if k == -1:
+        right = la
+    la = (left + right) // 2
+    print('{{ la }}')

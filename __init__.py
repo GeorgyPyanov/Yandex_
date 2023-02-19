@@ -1,4 +1,6 @@
-from flask import Flask, url_for, render_template, redirect
+import os
+
+from flask import Flask, url_for, render_template, redirect, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
@@ -47,21 +49,14 @@ def ro():
                 </html>'''
 
 
-@app.route('/distribution/<username>/<int:number>')
-def sample_file_upload(username, number):
-    if username == 'male' and number < 21:
-        a = "/static/img/2.jpg"
-        b = "background-color:#00FF7F"
-    elif username == 'male':
-        a = "/static/img/2.jpg"
-        b = "background-color:#808000"
-    elif username == 'female' and number < 21:
-        a = "/static/img/1.jpg"
-        b = "background-color:#8B0000"
-    else:
-        a = "/static/img/1.jpg"
-        b = "background-color:#FF1493"
-    return render_template('base.html', a=a, b=b)
+@app.route('/distribution', methods=['POST', 'GET'])
+def sample_file_upload():
+    if request.method == 'GET':
+        return render_template('base.html', list=os.listdir('static/img'))
+    elif request.method == 'POST':
+        f = request.files['file']
+        f.save('static/img/' + f.filename)
+        return render_template('base.html', list=os.listdir('static/img')[1:])
 
 
 if __name__ == '__main__':
