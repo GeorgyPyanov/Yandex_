@@ -2,43 +2,10 @@
 
 {% block content %}
 <div>
-  <img src="/static/img/MARS-2-7.png" alt="здесь должна была быть картинка, но не нашлась">
-  <h1>Аварийный доступ</h1>
+  <h1>{{ name }}</h1>
+  <div>
+    <img src="/static/img/{{ img }}" alt="здесь должна была быть картинка, но не нашлась" width="400" height="300">
+    <p>{{ list|join(', ') }}</p>
+  </div>
 </div>
-<form action="" method="post" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.username.label }}<br>
-        {{ form.username(class="form-control") }}<br>
-        {% for error in form.username.errors %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% endfor %}
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password(class="form-control", type="password") }}<br>
-        {% for error in form.password.errors %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% endfor %}
-    <p>
-        {{ form.username1.label }}<br>
-        {{ form.username1(class="form-control", type="password") }}<br>
-        {% for error in form.username1.errors %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% endfor %}
-    <p>
-        {{ form.password1.label }}<br>
-        {{ form.password1(class="form-control", type="password") }}<br>
-        {% for error in form.password1.errors %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}21
-    </div>
-    {% endfor %}
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-</form>
 {% endblock %}

@@ -1,4 +1,6 @@
+import json
 import os
+from random import randrange
 
 from flask import Flask, url_for, render_template, redirect, request
 from flask_wtf import FlaskForm
@@ -49,14 +51,12 @@ def ro():
                 </html>'''
 
 
-@app.route('/distribution', methods=['POST', 'GET'])
+@app.route('/member')
 def sample_file_upload():
-    if request.method == 'GET':
-        return render_template('base.html', list=os.listdir('static/img'))
-    elif request.method == 'POST':
-        f = request.files['file']
-        f.save('static/img/' + f.filename)
-        return render_template('base.html', list=os.listdir('static/img')[1:])
+    with open("templates/u.json", "rt", encoding="utf8") as f:
+        news_list = json.loads(f.read())
+    y = news_list[str(randrange(1, 5))]
+    return render_template('auto_answer.html', list=y[1], img=y[2], name=y[0])
 
 
 if __name__ == '__main__':
