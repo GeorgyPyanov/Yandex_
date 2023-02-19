@@ -1,6 +1,18 @@
-from flask import Flask, url_for, request, render_template
+from flask import Flask, url_for, render_template, redirect
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+
+
+class LoginForm(FlaskForm):
+    username = StringField('id астронавта', validators=[DataRequired()])
+    password = PasswordField('Пароль астронавта', validators=[DataRequired()])
+    username1 = StringField('id капитана', validators=[DataRequired()])
+    password1 = PasswordField('Пароль капитана', validators=[DataRequired()])
+    submit = SubmitField('Доступ')
 
 
 @app.route('/')
@@ -35,11 +47,13 @@ def ro():
                 </html>'''
 
 
-@app.route('/auto_answer')
-@app.route('/answer')
+@app.route('/auto_answer', methods=['GET', 'POST'])
+@app.route('/answer', methods=['GET', 'POST'])
 def sample_file_upload():
-    param = {'title': '', 'surname': '111', 'name': '', 'education': '', 'profession': '', 'motivation': '', 'ready': ''}
-    return render_template('auto_answer.html', **param)
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    return render_template('auto_answer.html', title='Авторизация', form=form)
 
 
 if __name__ == '__main__':
