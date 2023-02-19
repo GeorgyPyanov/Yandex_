@@ -5,11 +5,12 @@
     <title>{{ title }}</title>
 </head>
 <body>
-<h1>Размещение по каютам</h1>
-{% set a = 'Каюта № ' %}
-{% for user in user_list %}
-<div>{{ user }} - {{ a }}{{ loop.index }} - {% if loop.first %} капитан корабля {% endif %}
-</div>
-{% endfor %}
+<h2>Оформление каюты</h2>
+<table>
+<tr><th>Цвет стен</th><th>Эмблема</th></tr>
+<tr><td><canvas id="myCanvas" width="300" height="300"
+                style='{{ b }}'>
+        </canvas></td><td><img src='{{ a }}' alt="здесь должна была быть картинка, но не нашлась"></td></tr>
+</table>
 </body>
 </html>

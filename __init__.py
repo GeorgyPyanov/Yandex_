@@ -47,10 +47,21 @@ def ro():
                 </html>'''
 
 
-@app.route('/distribution')
-def sample_file_upload():
-    user_list = ['Юлия Викторовна', 'Наташа', 'Полина', 'Чулпан', 'Гоша']
-    return render_template('base.html', user_list=user_list)
+@app.route('/distribution/<username>/<int:number>')
+def sample_file_upload(username, number):
+    if username == 'male' and number < 21:
+        a = "/static/img/2.jpg"
+        b = "background-color:#00FF7F"
+    elif username == 'male':
+        a = "/static/img/2.jpg"
+        b = "background-color:#808000"
+    elif username == 'female' and number < 21:
+        a = "/static/img/1.jpg"
+        b = "background-color:#8B0000"
+    else:
+        a = "/static/img/1.jpg"
+        b = "background-color:#FF1493"
+    return render_template('base.html', a=a, b=b)
 
 
 if __name__ == '__main__':
